@@ -1,0 +1,27 @@
+<!DOCTYPE html5>
+<html>
+  <head>
+    <title>Conway's Game of Life</title>
+    <script src="main.js"></script>
+    <script src="draw.js"></script>
+    <script src="sound.js"></script>
+    <style>
+      canvas 
+      {
+        opacity: 1;  
+        background: black;
+      }
+      .backCanvas {
+        opacity: 0.5;
+      }
+    </style>
+  </head>
+
+  <body>
+    <canvas id="canvas1" width=600 height=600></canvas>
+    <input type=button onclick="start()" value="START">
+    <input type=button onclick="stop()" value="STOP">
+    <input type=button onclick="randomizeGrid()" value="RANDOMIZE">
+    <p id="output"></p>
+  </body>
+</html>
