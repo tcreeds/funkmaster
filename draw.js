@@ -1,48 +1,17 @@
-var canvas;
-var context;
-var cellWidth;
-var cellHeight;
-var firstDraw = true;
+var MAX_PARTICLES = 10000;
+var particles = [];
+var renderer;
+var stage;
+var sprites;
 
-function initDraw()
-{
-  canvas = document.getElementById("canvas1");
-  context = canvas.getContext("2d");
-  cellWidth = canvas.width / GRID_SIZE;
-  cellHeight = canvas.height / GRID_SIZE;
-}
+window.onload = function(){    
 
-function draw()
-{
-  for (var x = 0; x < currentBuffer.length; x++)
-  {
-    for (var y = 0; y < currentBuffer[x].length; y++)
-    {
-      if (firstDraw || currentBuffer[x][y] !== backBuffer[x][y])
-      {
-        context.fillStyle = (currentBuffer[x][y] === 0) ? "#ffffff" : species[currentBuffer[x][y] - 1];
-        context.fillRect(cellWidth * x, cellHeight * y, cellWidth, cellHeight);
-      }
-      
-    }
-  }
-  firstDraw = false;
-}
+    renderer = PIXI.autoDetectRenderer(160, 480);
+    document.body.appendChild(renderer.view);
 
-function clearDraw()
-{
-  return;
-  canvas.width = canvas.width;
-  for (var x = 0; x < currentBuffer.length; x++)
-  {
-    for (var y = 0; y < currentBuffer[x].length; y++)
-    {
-      if (currentBuffer[x][y] !== 0)
-      {
-        context.fillStyle = species[currentBuffer[x][y] - 1];
-        context.fillRect(cellWidth * x, cellHeight * y, cellWidth, cellHeight);
-      }
-      
-    }
-  }
+    // create the root of the scene graph
+    stage = new PIXI.Container();
+
+    
+    FM.init();
 }
