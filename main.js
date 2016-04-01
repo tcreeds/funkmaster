@@ -1,27 +1,28 @@
 var FM = FM || {};
 
-var GRID_WIDTH = 20;
-var GRID_HEIGHT = 20;
+var CELL_WIDTH = 20;
+var CELL_HEIGHT = 20;
+var CANVAS_WIDTH = 320;
+var CANVAS_HEIGHT = 480;
+
 var box;
+var box2;
 var marker;
 
-var sounds = [261.63, 293.66, 329.63, 349.23, 392, 440, 493.88, 523.25, 587.33, 659.25, 698.46, 783.99, 880, 987.77];
+var bass = [261.63, 293.66, 329.63, 349.23, 392, 440, 493.88];
+var treble = [523.25, 587.33, 659.25, 698.46, 783.99, 880, 987.77];
 
 var beat = 0;
 var measureWidth = 4;
 
 FM.init = function()
 {
-    marker = PIXI.Sprite.fromImage("button.png");
-    marker.tint = 0xcccccc;
-    marker.width = GRID_WIDTH;
-    marker.height = 480;
-    marker.x = 0;
-    marker.y = 0;
-    stage.addChild(marker);
     
+    console.log("init");
     var automata = new FM.Automata(8, 24);
-    box = new FM.Box(160, 480, automata);
+    box = new FM.Box(0, 0, automata);
+    var automata2 = new FM.Automata(8, 24);
+    box2 = new FM.Box(160, 0, automata2);
     setInterval(update, 300);
     
     
@@ -29,12 +30,14 @@ FM.init = function()
 
 function update()
 {
-    marker.x = beat * GRID_WIDTH;
-    box.update();
+    box.update(beat);
     box.draw();
+    box2.update(beat);
+    box2.draw();
     renderer.render(stage);
     
-    box.play(beat);
+    box.play(beat, bass);
+    box2.play(beat, treble);
     
     
     

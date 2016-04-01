@@ -6,7 +6,7 @@ var sprites;
 
 window.onload = function(){    
 
-    renderer = PIXI.autoDetectRenderer(160, 480);
+    renderer = PIXI.autoDetectRenderer(CANVAS_WIDTH, CANVAS_HEIGHT);
     document.body.appendChild(renderer.view);
 
     // create the root of the scene graph

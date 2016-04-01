@@ -56,17 +56,17 @@ FM.Automata.prototype.update = function()
     this.backBuffer = temp;
 }
 
-FM.Automata.prototype.draw = function(particles)
+FM.Automata.prototype.draw = function(x, y, particles)
 {
     var counter = 0;
-    for (var x = 0; x < this.currentBuffer.length; x++)
+    for (var i = 0; i < this.currentBuffer.length; i++)
     {
-        for (var y = 0; y < this.currentBuffer[x].length; y++)
+        for (var j = 0; j < this.currentBuffer[i].length; j++)
         {
-            if (this.currentBuffer[x][y] == 1)
+            if (this.currentBuffer[i][j] == 1)
             {
-                particles[counter].x = x * 160 / this.currentBuffer.length;
-                particles[counter].y = y * 480 / this.currentBuffer[0].length;
+                particles[counter].x = i * CELL_WIDTH + x;
+                particles[counter].y = j * CELL_HEIGHT + y;
                 counter++;
             }
         }
@@ -78,13 +78,13 @@ FM.Automata.prototype.draw = function(particles)
     }   
 }
 
-FM.Automata.prototype.play = function(beat)
+FM.Automata.prototype.play = function(beat, sounds)
 {
     var note = 0;
     for (var i = 0; i < this.currentBuffer[beat].length; i++)
         note += this.currentBuffer[beat][i];
     
-    playNote(sounds[note], 0.3, 1, "sine");
+    playNote(sounds[note % sounds.length], 0.3, 1, "sine");
 }
 
 FM.Automata.prototype.getNeighbors = function(x, y)
