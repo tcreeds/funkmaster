@@ -13,7 +13,6 @@ var bass = [261.63, 293.66, 329.63, 349.23, 392, 440, 493.88];
 var treble = [523.25, 587.33, 659.25, 698.46, 783.99, 880, 987.77];
 
 var beat = 0;
-var measureWidth = 4;
 
 FM.init = function()
 {
@@ -30,14 +29,19 @@ FM.init = function()
 
 function update()
 {
-    box.update(beat);
-    box.draw();
+    console.log("########################### ");
+    if (beat % 2 == 0){
+        box.update(beat);
+        box.draw();
+        box.play(beat, bass);
+    }
     box2.update(beat);
     box2.draw();
+    box2.play(beat, treble);
+    
     renderer.render(stage);
     
-    box.play(beat, bass);
-    box2.play(beat, treble);
+    
     
     
     

@@ -10,7 +10,8 @@ FM.Box = function(x, y, generator)
     this.marker.width = CELL_WIDTH;
     this.marker.height = this.generator.height * CELL_HEIGHT;
     this.marker.x = this.x;
-    this.marker.y = this.y;
+    this.marker.y = this.y + this.marker.height;
+    this.marker.anchor.set(0, 1);
     stage.addChild(this.marker);
     
     this.sprites = new PIXI.ParticleContainer(MAX_PARTICLES, {
@@ -26,6 +27,7 @@ FM.Box = function(x, y, generator)
         var particle = PIXI.Sprite.fromImage("button.png");  
         particle.width = CELL_WIDTH;
         particle.height = CELL_HEIGHT;
+        particle.alpha = 0.5;
         this.particles.push(particle);
         this.sprites.addChild(particle);
     }
@@ -45,5 +47,5 @@ FM.Box.prototype.draw = function()
 FM.Box.prototype.play = function(beat, sounds)
 {
     
-    this.generator.play(beat, sounds);   
+    this.marker.height = CELL_HEIGHT * (this.generator.play(beat, sounds) + 1);   
 }

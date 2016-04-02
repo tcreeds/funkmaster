@@ -84,7 +84,9 @@ FM.Automata.prototype.play = function(beat, sounds)
     for (var i = 0; i < this.currentBuffer[beat].length; i++)
         note += this.currentBuffer[beat][i];
     
-    playNote(sounds[note % sounds.length], 0.3, 1, "sine");
+    note = note % sounds.length;
+    playNote(sounds[note], 0.3, 1, "square");
+    return note;
 }
 
 FM.Automata.prototype.getNeighbors = function(x, y)
