@@ -1,12 +1,20 @@
-FM.Box = function(x, y, generator)
+FM.Box = function(x, y, generator, colors )
 {
+    colors = colors || {};
     this.x = x || 0;
     this.y = y || 0;
     this.generator = generator;
     this.generator.init();
+    this.background = PIXI.Sprite.fromImage("blank.png");
+    this.background.tint = colors.background || 0x000099;
+    this.background.width = CELL_WIDTH * this.generator.width;
+    this.background.height = CELL_HEIGHT * this.generator.height;
+    this.background.x = x;
+    this.background.y = y;
+    stage.addChild(this.background);
     
-    this.marker = PIXI.Sprite.fromImage("button.png");
-    this.marker.tint = 0xcccccc;
+    this.marker = PIXI.Sprite.fromImage("blank.png");
+    this.marker.tint = colors.marker || 0xcccccc;
     this.marker.width = CELL_WIDTH;
     this.marker.height = this.generator.height * CELL_HEIGHT;
     this.marker.x = this.x;
@@ -31,12 +39,22 @@ FM.Box = function(x, y, generator)
         this.particles.push(particle);
         this.sprites.addChild(particle);
     }
+    
+    this.beat = this.generator.width;
 }
 
-FM.Box.prototype.update = function(beat)
+FM.Box.prototype.tick = function()
+{
+    this.beat++;
+    if (this.beat >= this.generator.width)
+        this.beat = 0;
+    
+}
+
+FM.Box.prototype.update = function()
 {
     this.generator.update();
-    this.marker.x = this.x + CELL_WIDTH * beat;
+    this.marker.x = this.x + CELL_WIDTH * this.beat;
 };
     
 FM.Box.prototype.draw = function()
@@ -44,8 +62,8 @@ FM.Box.prototype.draw = function()
     this.generator.draw(this.x, this.y, this.particles);
 }
 
-FM.Box.prototype.play = function(beat, sounds)
+FM.Box.prototype.play = function(sounds)
 {
     
-    this.marker.height = CELL_HEIGHT * (this.generator.play(beat, sounds) + 1);   
+    this.marker.height = CELL_HEIGHT * (this.generator.play(this.beat, sounds) + 1);   
 }
