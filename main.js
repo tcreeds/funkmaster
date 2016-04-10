@@ -9,6 +9,7 @@ var MAX_PARTICLES = 10000;
 var renderer;
 var stage;
 
+
 var boxes = [];
 
 var sounds = [];
@@ -17,15 +18,32 @@ sounds["c5"] = [523.25, 587.33, 659.25, 698.46, 783.99, 880, 987.77];
 
 var beat = 0;
 
-window.onload = () => FM.init();
+window.onload = function(){
+    FM.init();  
+} 
 
 FM.init = function()
 {
     
     console.log("init");
-    
+
+    irows = undefined;
+    irows = document.querySelector("#rows");
+    icolumns = document.getElementById("columns");
+    iscale = document.getElementById("scale");
+    irestart = document.getElementById("restartButton");
+    iname = undefined;
+    iname = document.getElementById("nameBox");
+
+    irows.addEventListener("change", changeRows);
+    icolumns.addEventListener("change", changeColumns);
+    iscale.addEventListener("change", changeScale);
+    irestart.addEventListener("click", restartBox);
+
+    iname.addEventListener("change", changeName);
+
     renderer = PIXI.autoDetectRenderer(CANVAS_WIDTH, CANVAS_HEIGHT);
-    document.body.appendChild(renderer.view);
+    document.getElementById("canvasContainer").appendChild(renderer.view);
 
     // create the root of the scene graph
     stage = new PIXI.Container();
@@ -56,7 +74,7 @@ FM.init = function()
 FM.update = function()
 {
     console.log("########################### ");
-    for (let i = 0; i < boxes.length; i++)
+    for (var i = 0; i < boxes.length; i++)
     {
         if (boxes[i].enabled)
         {
@@ -73,31 +91,32 @@ FM.update = function()
 
 FM.inspectBox = function(box, event)
 {
-    var selectedBox = box;
-    var name = document.getElementById("name");
-    var rows = document.getElementById("rows");
-    var columns = document.getElementById("columns");
-    var scale = document.getElementById("scale");
+    selectedBox = box;
     
-    name.value = box.name;
-    rows.value = box.generator.rows;
-    columns.value = box.generator.columns;
-    scale.value = box.scale;
-    
-    var nameListener = ()=> { selectedBox.name = name.value; };
-    var rowsListener = ()=> { selectedBox.generator.rows = rows.value; };
-    var columnsListener = ()=> { selectedBox.generator.columns = columns.value; };
-    var scaleListener = ()=> { selectedBox.scale = scale.value; };
-    
-    name.removeEventListener("change", nameListener);
-    rows.removeEventListener("change", rowsListener);
-    columns.removeEventListener("change", columnsListener);
-    scale.removeEventListener("change", scaleListener);
-    
-    name.addEventListener("change", nameListener);
-    rows.addEventListener("change", rowsListener);
-    columns.addEventListener("change", columnsListener);
-    scale.addEventListener("change", scaleListener);
+    iname.value = selectedBox.name;
+    irows.value = selectedBox.generator.rows;
+    icolumns.value = selectedBox.generator.columns;
+    iscale.value = selectedBox.scale;
     
 }
 
+function changeName() 
+{ 
+    selectedBox.name = iname.value; 
+};
+function changeRows() 
+{ 
+    selectedBox.generator.rows = irows.value; 
+};
+function changeColumns()
+{ 
+    selectedBox.generator.columns = icolumns.value; 
+};
+function changeScale()
+{ 
+    selectedBox.scale = iscale.value; 
+};
+function restartBox()
+{
+    selectedBox.generator.init();
+};

@@ -10,17 +10,52 @@
     <script src="main.js"></script>
     <script src="box.js"></script>
     <script src="automata.js"></script>
+    <style>
+        label{
+            width: 5em;
+            display: block;
+            float: left;
+        }
+        .data{
+            float: left;
+            width: 100%;
+            padding: 0.5em;
+        }
+        #canvasContainer{
+            float: left;
+        }
+        #dataContainer{
+            float: left;
+            width: 300px;
+            padding: 0.5em;
+        }
+    </style>
 </head>
 <body>
     <div id="canvasContainer"></div>
     <div id="dataContainer">
-        <input type=text id="name">
-        <input type=text id="rows">
-        <input type=text id="columns">
-        <select id="scale">
-            <option value="c4">C4</option>
-            <option value="c5">C5</option>
-        </select>
+        
+        <div class="data">
+            <label for="name">Name</label>
+            <input type=text id="nameBox">
+        </div>
+        <div class="data">
+            <label for="scale">Scale</label>
+            <select id="scale">
+                <option value="c4">C4</option>
+                <option value="c5">C5</option>
+            </select>
+        </div>
+        <div class="data">
+            <label for="rows">Rows</label>
+            <input type=text id="rows">
+        </div>
+        <div class="data">
+            <label for="columns">Columns</label>
+            <input type=text id="columns">
+        </div>
+        <button id="restartButton">RESTART</button>
+        
     </div>
 </body>
 </html>
