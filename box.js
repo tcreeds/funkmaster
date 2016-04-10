@@ -1,22 +1,27 @@
-FM.Box = function(x, y, generator, colors )
+FM.Box = function(x, y, generator, scale, colors )
 {
     colors = colors || {};
     this.x = x || 0;
     this.y = y || 0;
     this.generator = generator;
     this.generator.init();
+    this.scale = scale;
+    this.name = "Box";
+    
     this.background = PIXI.Sprite.fromImage("blank.png");
     this.background.tint = colors.background || 0x000099;
-    this.background.width = CELL_WIDTH * this.generator.width;
-    this.background.height = CELL_HEIGHT * this.generator.height;
+    this.background.width = CELL_WIDTH * this.generator.columns;
+    this.background.height = CELL_HEIGHT * this.generator.rows;
     this.background.x = x;
     this.background.y = y;
+    this.background.interactive = true;
+    this.background.on("click", (event) => FM.inspectBox(this, event));
     stage.addChild(this.background);
     
     this.marker = PIXI.Sprite.fromImage("blank.png");
     this.marker.tint = colors.marker || 0xcccccc;
     this.marker.width = CELL_WIDTH;
-    this.marker.height = this.generator.height * CELL_HEIGHT;
+    this.marker.height = this.generator.rows * CELL_HEIGHT;
     this.marker.x = this.x;
     this.marker.y = this.y + this.marker.height;
     this.marker.anchor.set(0, 1);
@@ -40,13 +45,15 @@ FM.Box = function(x, y, generator, colors )
         this.sprites.addChild(particle);
     }
     
-    this.beat = this.generator.width;
+    this.beat = this.generator.columns;
+    
+    this.enabled = true;
 }
 
 FM.Box.prototype.tick = function()
 {
     this.beat++;
-    if (this.beat >= this.generator.width)
+    if (this.beat >= this.generator.columns)
         this.beat = 0;
     
 }
@@ -62,8 +69,8 @@ FM.Box.prototype.draw = function()
     this.generator.draw(this.x, this.y, this.particles);
 }
 
-FM.Box.prototype.play = function(sounds)
+FM.Box.prototype.play = function()
 {
     
-    this.marker.height = CELL_HEIGHT * (this.generator.play(this.beat, sounds) + 1);   
+    this.marker.height = CELL_HEIGHT * (this.generator.play(this.beat, this.scale) + 1);   
 }

@@ -1,25 +1,25 @@
 FM.Automata = function(width, height)
 {
-    this.width = width;
-    this.height = height;
+    this.columns = width;
+    this.rows = height;
 }
 
 FM.Automata.prototype.constructor = FM.Automata;
 
 FM.Automata.prototype.init = function()
 {
-    this.generatePlot(this.width, this.height);   
+    this.generatePlot(this.columns, this.rows);   
 }
 
-FM.Automata.prototype.generatePlot = function(width, height)
+FM.Automata.prototype.generatePlot = function(columns, rows)
 {
     this.currentBuffer = [];
     this.backBuffer = [];
-    for (var x = 0; x < width; x++)
+    for (var x = 0; x < columns; x++)
     {
         this.currentBuffer.push([]);
         this.backBuffer.push([]);
-        for (var y = 0; y < height; y++)
+        for (var y = 0; y < rows; y++)
         {
             this.currentBuffer[x].push(Math.random() > 0.8 ? 1 : 0);
             this.backBuffer[x].push(0);
@@ -78,14 +78,15 @@ FM.Automata.prototype.draw = function(x, y, particles)
     }   
 }
 
-FM.Automata.prototype.play = function(beat, sounds)
+FM.Automata.prototype.play = function(beat, scale)
 {
+    var notes = sounds[scale];
     var note = 0;
     for (var i = 0; i < this.currentBuffer[beat].length; i++)
         note += this.currentBuffer[beat][i];
     
-    note = note % sounds.length;
-    playNote(sounds[note], 0.3, 1, "square");
+    note = note % notes.length;
+    playNote(notes[note], 0.3, 1, "square");
     return note;
 }
 

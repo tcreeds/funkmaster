@@ -1,10 +1,5 @@
 var ctx = new AudioContext();
 
-onmessage = function(event)
-{
-  playNote.apply(this, event.data);
-}
-
 function playNote( frequency, duration, volume, type) {
     console.log(frequency);
     var osc = ctx.createOscillator();
