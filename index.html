@@ -6,15 +6,42 @@
     <title>Funkmaster</title>
     
     <script src="pixi.min.js"></script>
+    <script src="FM.js"></script>
     <script src="sound.js"></script>
     <script src="main.js"></script>
     <script src="box.js"></script>
     <script src="automata.js"></script>
     <style>
+        *{
+            box-sizing: border-box;   
+        }
         label{
             width: 5em;
             display: block;
             float: left;
+        }
+        button {
+            display: block;
+            width: 9em;
+            margin: 0.5em auto;
+            padding: 0.4em;
+            background: white;
+            color: blue;
+            border: 2px solid blue;
+            transition: all 0.5s ease;
+            -webkit-transition: all 0.5s ease;
+        }
+        button::before,
+        button::after{
+            display: table;
+            content: " ";
+        }
+        button::after{
+            clear:both;   
+        }
+        button:hover {
+            background: blue;
+            color: white;   
         }
         .data{
             float: left;
@@ -55,7 +82,7 @@
             <input type=text id="columns">
         </div>
         <button id="restartButton">RESTART</button>
-        
+        <button id="muteButton">MUTE</button>
     </div>
 </body>
 </html>

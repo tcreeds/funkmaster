@@ -65,20 +65,21 @@ FM.Automata.prototype.draw = function(x, y, particles)
         {
             if (this.currentBuffer[i][j] == 1)
             {
-                particles[counter].x = i * CELL_WIDTH + x;
-                particles[counter].y = j * CELL_HEIGHT + y;
+                particles[counter].alpha = 0.5;
+                particles[counter].x = i * CELL_WIDTH;
+                particles[counter].y = j * CELL_HEIGHT;
                 counter++;
             }
         }
     }
     for (var n = counter; n < particles.length; n++)
     {
-        particles[n].x = -100;
-        particles[n].y = -100;
+        particles[n].alpha = 0;
+        particles[n].x = -1000;
     }   
 }
 
-FM.Automata.prototype.play = function(beat, scale)
+FM.Automata.prototype.play = function(beat, scale, muted)
 {
     var notes = sounds[scale];
     var note = 0;
@@ -86,7 +87,8 @@ FM.Automata.prototype.play = function(beat, scale)
         note += this.currentBuffer[beat][i];
     
     note = note % notes.length;
-    playNote(notes[note], 0.3, 1, "square");
+    if (!muted)
+        playNote(notes[note], 0.3, undefined, "square");
     return note;
 }
 

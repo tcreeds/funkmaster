@@ -1,10 +1,10 @@
 var ctx = new AudioContext();
 
 function playNote( frequency, duration, volume, type) {
-    console.log(frequency);
+    //console.log(frequency);
     var osc = ctx.createOscillator();
     var gain = ctx.createGain();
-    gain.gain.value = volume || 1;
+    gain.gain.value = volume || 0.5;
     // square, sine, triangle, sawtooth...
     osc.type = type || 'sawtooth';
 
