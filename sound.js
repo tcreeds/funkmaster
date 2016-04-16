@@ -1,7 +1,6 @@
 var ctx = new AudioContext();
 
 function playNote( frequency, duration, volume, type) {
-    //console.log(frequency);
     var osc = ctx.createOscillator();
     var gain = ctx.createGain();
     gain.gain.value = volume || 0.5;
@@ -14,8 +13,5 @@ function playNote( frequency, duration, volume, type) {
     gain.connect( ctx.destination );
 
     osc.start();
-
-    // remove the node two seconds from
-    // the current audio time
     osc.stop( ctx.currentTime + duration );
 }

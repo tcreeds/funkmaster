@@ -1,26 +1,26 @@
 var FM = FM || {};
 
-var CELL_WIDTH = 20;
-var CELL_HEIGHT = 20;
-var CANVAS_WIDTH = 640;
-var CANVAS_HEIGHT = 640;
+FM.CELL_WIDTH = 20;
+FM.CELL_HEIGHT = 20;
+FM.CANVAS_WIDTH = 640;
+FM.CANVAS_HEIGHT = 640;
 
-var MAX_PARTICLES = 10000;
-var renderer;
-var stage;
-var selectedBox;
+FM.MAX_PARTICLES = 10000;
+FM.renderer;
+FM.stage;
+FM.selectedBox;
 
-var boxes = [];
+FM.boxes = [];
 
-var sounds = [];
-sounds["c3"] = [130.81, 146.83, 164.81, 174.61, 196, 220, 246.94];
-sounds["c4"] = [261.63, 293.66, 329.63, 349.23, 392, 440, 493.88];
-sounds["c5"] = [523.25, 587.33, 659.25, 698.46, 783.99, 880, 987.77];
-
-var beat = 0;
+FM.sounds = {
+    "c3": [130.81, 146.83, 164.81, 174.61, 196, 220, 246.94],
+    "c4": [261.63, 293.66, 329.63, 349.23, 392, 440, 493.88],
+    "c5": [523.25, 587.33, 659.25, 698.46, 783.99, 880, 987.77]
+};
 
 window.onload = function(){
     
+    //grab input elements
     iname = document.getElementById("nameBox");
     irows = document.querySelector("#rows");
     icolumns = document.getElementById("columns");
@@ -28,6 +28,7 @@ window.onload = function(){
     irestart = document.getElementById("restartButton");
     imute = document.getElementById("muteButton");
 
+    //add listeners to input elements
     iname.addEventListener("change", changeName);
     irows.addEventListener("change", changeRows);
     icolumns.addEventListener("change", changeColumns);
@@ -35,50 +36,56 @@ window.onload = function(){
     irestart.addEventListener("click", restartBox);
     imute.addEventListener("click", toggleMute);
 
-    renderer = PIXI.autoDetectRenderer(CANVAS_WIDTH, CANVAS_HEIGHT);
-    document.getElementById("canvasContainer").appendChild(renderer.view);
+    //initialize canvas
+    FM.renderer = PIXI.autoDetectRenderer(FM.CANVAS_WIDTH, FM.CANVAS_HEIGHT);
+    document.getElementById("canvasContainer").appendChild(FM.renderer.view);
 
     // create the root of the scene graph
-    stage = new PIXI.Container();
+    FM.stage = new PIXI.Container();
     
     FM.init();
     requestAnimationFrame(FM.draw);
+    setInterval(FM.update, 300);
 }
 
 FM.update = function()
 {
-    for (var i = 0; i < boxes.length; i++)
+    for (var i = 0; i < FM.boxes.length; i++)
     {
-        if (boxes[i].enabled)
+        FM.boxes[i].tick();
+        if (FM.boxes[i].enabled)
         {
-            boxes[i].tick();
-            boxes[i].update();
-            boxes[i].draw();
-            boxes[i].play();
+            FM.boxes[i].update();
+            FM.boxes[i].play();
         }
     }
-    beat = (beat + 1) % 8;
 }
 
 FM.draw = function()
 {
     requestAnimationFrame(FM.draw);
-    renderer.render(stage);
+    for (var i = 0; i < FM.boxes.length; i++)
+    {
+        if (FM.boxes[i].enabled)
+            FM.boxes[i].draw();
+    }
+    FM.renderer.render(FM.stage);
 }
 
+//binds inputs to Box
 FM.inspectBox = function(box, event)
 {
-    if (selectedBox)
-        selectedBox.background.tint = selectedBox.colors.background;
-    selectedBox = box;
-    selectedBox.background.tint = 0x333333;
+    if (FM.selectedBox)
+        FM.selectedBox.background.tint = FM.selectedBox.colors.background;
+    FM.selectedBox = box;
+    FM.selectedBox.background.tint = 0x333333;
     
-    iname.value = selectedBox.name;
-    irows.value = selectedBox.generator.rows;
-    icolumns.value = selectedBox.generator.columns;
-    iscale.value = selectedBox.scale;
+    iname.value = FM.selectedBox.name;
+    irows.value = FM.selectedBox.generator.rows;
+    icolumns.value = FM.selectedBox.generator.columns;
+    iscale.value = FM.selectedBox.scale;
     
-    if (selectedBox.muted)
+    if (FM.selectedBox.muted)
         imute.innerText = "UNMUTE";
     else
         imute.innerText = "MUTE";
@@ -87,29 +94,29 @@ FM.inspectBox = function(box, event)
 
 function changeName() 
 { 
-    selectedBox.name = iname.value; 
+    FM.selectedBox.name = iname.value; 
 };
 function changeRows() 
 { 
-    selectedBox.generator.rows = irows.value; 
+    FM.selectedBox.generator.rows = irows.value; 
 };
 function changeColumns()
 { 
-    selectedBox.generator.columns = icolumns.value; 
+    FM.selectedBox.generator.columns = icolumns.value; 
 };
 function changeScale()
 { 
-    selectedBox.scale = iscale.value; 
+    FM.selectedBox.scale = iscale.value; 
 };
 function toggleMute()
 {
-    selectedBox.muted = !selectedBox.muted;  
-    if (selectedBox.muted)
+    FM.selectedBox.muted = !FM.selectedBox.muted;  
+    if (FM.selectedBox.muted)
         imute.innerText = "UNMUTE";
     else
         imute.innerText = "MUTE";
 };
 function restartBox()
 {
-    selectedBox.restart();
+    FM.selectedBox.restart();
 };
