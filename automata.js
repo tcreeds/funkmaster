@@ -86,9 +86,9 @@ FM.Automata.prototype.play = function(beat, scale, muted)
     for (var i = 0; i < this.currentBuffer[beat].length; i++)
         note += this.currentBuffer[beat][i];
     
-    note = note % notes.length;
-    if (!muted)
-        playNote(notes[note], 0.3, undefined, "square");
+    note = note % (notes.length + 1);
+    if (!muted && note != 0)
+        playNote(notes[note - 1], 0.3, undefined, "square");
     return note;
 }
 

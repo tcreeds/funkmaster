@@ -9,6 +9,7 @@ FM.MAX_PARTICLES = 10000;
 FM.renderer;
 FM.stage;
 FM.selectedBox;
+FM.muted = false;
 
 FM.boxes = [];
 
@@ -27,6 +28,7 @@ window.onload = function(){
     iscale = document.getElementById("scale");
     irestart = document.getElementById("restartButton");
     imute = document.getElementById("muteButton");
+    imuteAll = document.getElementById("muteAllButton");
 
     //add listeners to input elements
     iname.addEventListener("change", changeName);
@@ -35,6 +37,7 @@ window.onload = function(){
     iscale.addEventListener("change", changeScale);
     irestart.addEventListener("click", restartBox);
     imute.addEventListener("click", toggleMute);
+    imuteAll.addEventListener("click", toggleMuteAll);
 
     //initialize canvas
     FM.renderer = PIXI.autoDetectRenderer(FM.CANVAS_WIDTH, FM.CANVAS_HEIGHT);
@@ -115,6 +118,14 @@ function toggleMute()
         imute.innerText = "UNMUTE";
     else
         imute.innerText = "MUTE";
+};
+function toggleMuteAll()
+{
+    FM.muted = !FM.muted;  
+    if (FM.muted)
+        imute.innerText = "UNMUTE ALL";
+    else
+        imute.innerText = "MUTE ALL";
 };
 function restartBox()
 {
