@@ -5,6 +5,7 @@
 
     <title>Funkmaster</title>
     
+    <script src="https://code.jquery.com/jquery-2.2.3.min.js"   integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo="   crossorigin="anonymous"></script>
     <script src="pixi.min.js"></script>
     <script src="FM.js"></script>
     <script src="sound.js"></script>
@@ -64,11 +65,11 @@
         
         <div class="data">
             <label for="name">Name</label>
-            <input type=text id="nameBox">
+            <input class="input" boxProperty="name" type=text id="nameBox">
         </div>
         <div class="data">
             <label for="scale">Scale</label>
-            <select id="scale">
+            <select class="input" boxProperty="scale" id="scale">
                 <option value="c3">C3</option>
                 <option value="c4">C4</option>
                 <option value="c5">C5</option>
@@ -76,11 +77,11 @@
         </div>
         <div class="data">
             <label for="rows">Rows</label>
-            <input type=text id="rows">
+            <input class="input" boxProperty="rows" type=text id="rows">
         </div>
         <div class="data">
             <label for="columns">Columns</label>
-            <input type=text id="columns">
+            <input class="input" boxProperty="columns" type=text id="columns">
         </div>
         <button id="restartButton">RESTART</button>
         <button id="muteButton">MUTE</button>
