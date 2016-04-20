@@ -20,19 +20,14 @@ FM.sounds = {
 
 window.onload = function(){
     
-    //grab input elements
-    iname = document.getElementById("nameBox");
-    irows = document.querySelector("#rows");
-    icolumns = document.getElementById("columns");
-    iscale = document.getElementById("scale");
+    $(".input").on("change", function(){
+       if (FM.selectedBox)
+           FM.selectedBox[this.getAttribute("boxProperty")] = this.value;        
+    });
+
     irestart = document.getElementById("restartButton");
     imute = document.getElementById("muteButton");
 
-    //add listeners to input elements
-    iname.addEventListener("change", changeName);
-    irows.addEventListener("change", changeRows);
-    icolumns.addEventListener("change", changeColumns);
-    iscale.addEventListener("change", changeScale);
     irestart.addEventListener("click", restartBox);
     imute.addEventListener("click", toggleMute);
 
@@ -80,10 +75,9 @@ FM.inspectBox = function(box, event)
     FM.selectedBox = box;
     FM.selectedBox.background.tint = 0x333333;
     
-    iname.value = FM.selectedBox.name;
-    irows.value = FM.selectedBox.generator.rows;
-    icolumns.value = FM.selectedBox.generator.columns;
-    iscale.value = FM.selectedBox.scale;
+    $(".input").each(function(i, el){
+         this.value = FM.selectedBox[this.getAttribute("boxProperty")];
+    });
     
     if (FM.selectedBox.muted)
         imute.innerText = "UNMUTE";

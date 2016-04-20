@@ -50,6 +50,15 @@ FM.Box = function(x, y, generator, scale, colors )
         this.sprites.addChild(particle);
     }
     
+    Object.defineProperty(this, "rows", {
+        get: function(){ return generator.rows;},
+        set: function(value){ generator.rows = value;}
+    })
+    Object.defineProperty(this, "columns", {
+        get: function() { return generator.columns; },
+        set: function(value) { generator.columns = value; }
+    })
+    
     this.beat = this.generator.columns;
     this.muted = false;
     this.enabled = true;
