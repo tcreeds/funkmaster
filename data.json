@@ -1,0 +1,60 @@
+{
+    "scales": {
+        "c3": [130.81, 146.83, 164.81, 174.61, 196, 220, 246.94],
+        "c4": [261.63, 293.66, 329.63, 349.23, 392, 440, 493.88],
+        "c5": [523.25, 587.33, 659.25, 698.46, 783.99, 880, 987.77]    
+    },
+    "boxes": [
+        {
+            "x": 0,
+            "y": 5,
+            "scale": "c4",
+            "waveform": "square",
+            "beatsPerMeasure": 3,
+            "rows": 16,
+            "columns": 3,
+            "restartOnDeath": true,
+            "restartOnLoop": false,
+            "muted": false,
+            "enabled": true,
+            "colors":{
+                "background": "0x009900"
+            },
+            "generator": "Automata"
+        },
+        {
+            "x": 200,
+            "y": 5,
+            "scale": "c5",
+            "waveform": "square",
+            "beatsPerMeasure": 4,
+            "rows": 12,
+            "columns": 12,
+            "restartOnDeath": true,
+            "restartOnLoop": false,
+            "muted": false,
+            "enabled": true,
+            "colors":{
+                "background": "0x990000"
+            },
+            "generator": "Automata"
+        },
+        {
+            "x": 75,
+            "y": 80,
+            "scale": "c4",
+            "waveform": "square",
+            "beatsPerMeasure": 2,
+            "rows": 6,
+            "columns": 4,
+            "restartOnDeath": true,
+            "restartOnLoop": false,
+            "muted": false,
+            "enabled": true,
+            "colors":{
+                "background": "0x000099"
+            },
+            "generator": "Automata"
+        }   
+    ]
+}

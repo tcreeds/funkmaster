@@ -5,7 +5,9 @@ FM.CELL_HEIGHT = 20;
 FM.CANVAS_WIDTH = 640;
 FM.CANVAS_HEIGHT = 640;
 
-FM.MAX_PARTICLES = 10000;
+FM.MAX_PARTICLES = 600;
+FM.MEASURE_TIME = 600;
+FM.TICKS_PER_MEASURE = 12;
 FM.renderer;
 FM.stage;
 FM.selectedBox;
@@ -23,27 +25,34 @@ window.onload = function(){
     
     $(".input").on("change", function(){
        if (FM.selectedBox)
-           FM.selectedBox[this.getAttribute("boxProperty")] = this.value;        
+            FM.selectedBox[this.getAttribute("boxProperty")] = this.value;        
     });
-
-    irestart = document.getElementById("restartButton");
-    imute = document.getElementById("muteButton");
-    imuteAll = document.getElementById("muteAllButton");
-
-    irestart.addEventListener("click", restartBox);
-    imute.addEventListener("click", toggleMute);
-    imuteAll.addEventListener("click", toggleMuteAll);
+    $(".checkbox").on("click", function(){
+        if (FM.selectedBox){
+            FM.selectedBox[this.getAttribute("boxProperty")] = this.checked;
+        }
+    });
 
     //initialize canvas
     FM.renderer = PIXI.autoDetectRenderer(FM.CANVAS_WIDTH, FM.CANVAS_HEIGHT);
     document.getElementById("canvasContainer").appendChild(FM.renderer.view);
+    FM.input = new InputManager(FM.renderer.view);
 
     // create the root of the scene graph
     FM.stage = new PIXI.Container();
     
-    FM.init();
-    requestAnimationFrame(FM.draw);
-    setInterval(FM.update, 300);
+    
+    $.getJSON("data.json", function(data){
+        for (var i = 0; i < data.boxes.length; i++){
+            (function(box){
+                var generator = new FM[box.generator](box.columns, box.rows);
+                FM.boxes.push(new FM.Box(generator, box));
+            })(data.boxes[i]);
+        }
+        
+        FM.update();
+        FM.updateLoop = setInterval(FM.update, FM.MEASURE_TIME / FM.TICKS_PER_MEASURE);
+    });
 }
 
 FM.update = function()
@@ -51,17 +60,13 @@ FM.update = function()
     for (var i = 0; i < FM.boxes.length; i++)
     {
         FM.boxes[i].tick();
-        if (FM.boxes[i].enabled)
-        {
-            FM.boxes[i].update();
-            FM.boxes[i].play();
-        }
     }
+    FM.draw();
 }
 
 FM.draw = function()
 {
-    requestAnimationFrame(FM.draw);
+    //requestAnimationFrame(FM.draw);
     for (var i = 0; i < FM.boxes.length; i++)
     {
         if (FM.boxes[i].enabled)
@@ -81,47 +86,44 @@ FM.inspectBox = function(box, event)
     $(".input").each(function(i, el){
          this.value = FM.selectedBox[this.getAttribute("boxProperty")];
     });
+    $(".checkbox").each(function(i, el){
+        this.checked = FM.selectedBox[this.getAttribute("boxProperty")]; 
+    });
     
     if (FM.selectedBox.muted)
-        imute.innerText = "UNMUTE";
+        $("#muteButton").text("UNMUTE");
     else
-        imute.innerText = "MUTE";
+        $("#muteButton").text("MUTE");
     
 }
 
-function changeName() 
-{ 
-    FM.selectedBox.name = iname.value; 
-};
-function changeRows() 
-{ 
-    FM.selectedBox.generator.rows = irows.value; 
-};
-function changeColumns()
-{ 
-    FM.selectedBox.generator.columns = icolumns.value; 
-};
-function changeScale()
-{ 
-    FM.selectedBox.scale = iscale.value; 
-};
-function toggleMute()
+function toggleMute(btn)
 {
     FM.selectedBox.muted = !FM.selectedBox.muted;  
     if (FM.selectedBox.muted)
-        imute.innerText = "UNMUTE";
+        btn.innerText = "UNMUTE";
     else
-        imute.innerText = "MUTE";
+        btn.innerText = "MUTE";
 };
-function toggleMuteAll()
+function toggleMuteAll(btn)
 {
     FM.muted = !FM.muted;  
     if (FM.muted)
-        imute.innerText = "UNMUTE ALL";
+        btn.innerText = "UNMUTE ALL";
     else
-        imute.innerText = "MUTE ALL";
+        btn.innerText = "MUTE ALL";
 };
-function restartBox()
+function restartBox(btn)
 {
-    FM.selectedBox.restart();
+    FM.selectedBox.shouldRestart = true;
+};
+function restartAll()
+{
+    for (var i = 0; i < FM.boxes.length; i++)
+    {
+        FM.boxes[i].restart();
+    }
+    clearInterval(FM.updateLoop);
+    FM.update();
+    FM.updateLoop = setInterval(FM.update, FM.MEASURE_TIME / FM.TICKS_PER_MEASURE);
 };

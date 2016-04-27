@@ -7,6 +7,7 @@
     
     <script src="https://code.jquery.com/jquery-2.2.3.min.js"   integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo="   crossorigin="anonymous"></script>
     <script src="pixi.min.js"></script>
+    <script src="inputManager.js"></script>
     <script src="FM.js"></script>
     <script src="sound.js"></script>
     <script src="main.js"></script>
@@ -24,7 +25,7 @@
         button {
             display: block;
             width: 9em;
-            margin: 0.5em auto;
+            margin: 0.7em auto;
             padding: 0.4em;
             background: white;
             color: blue;
@@ -52,16 +53,18 @@
         #canvasContainer{
             float: left;
         }
-        #dataContainer{
+        .dataContainer{
             float: left;
             width: 300px;
             padding: 0.5em;
+            margin: 0.2em;
+            border: 1px solid black;
         }
     </style>
 </head>
 <body>
     <div id="canvasContainer"></div>
-    <div id="dataContainer">
+    <div class="dataContainer">
         
         <div class="data">
             <label for="name">Name</label>
@@ -76,6 +79,19 @@
             </select>
         </div>
         <div class="data">
+            <label for="waveform">Waveform</label>
+            <select class="input" boxProperty="waveform" id="waveform">
+                <option value="square">Square</option>
+                <option value="triangle">Triangle</option>
+                <option value="sawtooth">Sawtooth</option>
+                <option value="sine">Sine</option>
+            </select>
+        </div>
+        <div class="data">
+            <label>Beats Per Measure</label>
+            <input class="input" type=text boxProperty="beatsPerMeasure">
+        </div>
+        <div class="data">
             <label for="rows">Rows</label>
             <input class="input" boxProperty="rows" type=text id="rows">
         </div>
@@ -83,9 +99,20 @@
             <label for="columns">Columns</label>
             <input class="input" boxProperty="columns" type=text id="columns">
         </div>
-        <button id="restartButton">RESTART</button>
-        <button id="muteButton">MUTE</button>
-        <button id="muteAllButton">MUTE ALL</button>
+        <div class="data">
+            <label>Restart On Death</label>
+            <input class="checkbox" boxProperty="restartOnDeath" type=checkbox>
+        </div>
+        <div class="data">
+            <label>Restart On Loop</label>
+            <input class="checkbox" boxProperty="restartOnLoop" type=checkbox>
+        </div>
+        <button id="restartButton" onclick="restartBox(this)">RESTART</button>
+        <button id="muteButton" onclick="toggleMute(this)">MUTE</button>
+    </div>
+    <div class="dataContainer">
+        <button id="restartAllButton" onclick="restartAll(this)">RESTART ALL</button>
+        <button id="muteAllButton" onclick="toggleMuteAll(this)">MUTE ALL</button>
     </div>
 </body>
 </html>

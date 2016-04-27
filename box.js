@@ -1,32 +1,22 @@
-FM.Box = function(x, y, generator, scale, colors )
+FM.Box = function( generator, data )
 {
-    colors = colors || {};
-    this.x = x || 0;
-    this.y = y || 0;
+    this.x = data.x || 0;
+    this.y = data.y || 0;
     this.generator = generator;
-    this.scale = scale;
-    this.name = "Box";
-    this.colors = colors;
+    this.scale = data.scale;
+    this.name = data.name || "Box";
+    this.waveform = data.waveform;
+    this.colors = data.colors || {};
     
     //container for all sprites in Box
     this.group = new PIXI.Container();
-    this.group.x = x;
-    this.group.y = y;
+    this.group.x = data.x;
+    this.group.y = data.y;
     FM.stage.addChild(this.group);
-    
-    //background for Box - handles mouse events
-    this.background = PIXI.Sprite.fromImage("blank.png");
-    this.background.tint = colors.background || 0x000099;
-    this.background.interactive = true;
-    this.background.on("mousedown", (event) => this.touchStart(event));
-    this.background.on("mousemove", (event) => this.drag(event));
-    this.background.on("mouseup", (event) => this.touchEnd(event));
-    this.background.on("click", (event) => FM.inspectBox(this, event));
-    this.group.addChild(this.background);
     
     //beat marker
     this.marker = PIXI.Sprite.fromImage("blank.png");
-    this.marker.tint = colors.marker || 0xcccccc;
+    this.marker.tint = data.colors.marker || 0x111111;
     this.marker.width = FM.CELL_WIDTH;
     this.marker.anchor.set(0, 1);
     this.group.addChild(this.marker);
@@ -45,23 +35,46 @@ FM.Box = function(x, y, generator, scale, colors )
         var particle = PIXI.Sprite.fromImage("button.png");  
         particle.width = FM.CELL_WIDTH;
         particle.height = FM.CELL_HEIGHT;
-        particle.alpha = 0.5;
+        particle.alpha = 1;
         this.particles.push(particle);
         this.sprites.addChild(particle);
     }
     
+    //background for Box - handles mouse events
+    this.background = PIXI.Sprite.fromImage("blank.png");
+    this.background.tint = this.colors.background || 0x000099;
+    this.background.interactive = true;
+    this.background.on("mousedown", (event) => this.touchStart(event));
+    this.background.on("mousemove", (event) => this.drag(event));
+    this.background.on("mouseup", (event) => this.touchEnd(event));
+    this.background.on("click", (event) => FM.inspectBox(this, event));
+    this.background.alpha = 0.5;
+    this.group.addChildAt(this.background, 0);
+    
     Object.defineProperty(this, "rows", {
         get: function(){ return generator.rows;},
         set: function(value){ generator.rows = value;}
-    })
+    });
     Object.defineProperty(this, "columns", {
         get: function() { return generator.columns; },
         set: function(value) { generator.columns = value; }
-    })
+    });
+    Object.defineProperty(this, "beatsPerMeasure", {
+        get: function() { return this.bpm; },
+        set: function(value) { 
+            this.bpm = value; 
+            this.ticksPerNote = Math.floor(FM.TICKS_PER_MEASURE / this.bpm);   
+            this.beatCounter = this.ticksPerNote;
+        }
+    });
     
     this.beat = this.generator.columns;
-    this.muted = false;
-    this.enabled = true;
+    this.beatsPerMeasure = data.beatsPerMeasure;
+    this.waveform = data.waveform;
+    this.muted = data.muted;
+    this.restartOnDeath = data.restartOnDeath;
+    this.shouldRestart = data.restartOnLoop;
+    this.enabled = data.enabled;
     this.restart();
 }
 
@@ -72,13 +85,32 @@ FM.Box.prototype.restart = function()
     this.background.height = FM.CELL_HEIGHT * this.generator.rows;
     this.marker.height = this.generator.rows * FM.CELL_HEIGHT;
     this.marker.y = this.marker.height;
+    this.beat = this.generator.columns;
+    this.beatsPerMeasure = this.bpm;
 }
 
 FM.Box.prototype.tick = function()
 {
-    this.beat++;
-    if (this.beat >= this.generator.columns)
+    this.beatCounter++;
+    if (this.beatCounter >= this.ticksPerNote)
+    {
+        this.beatCounter = 0;
+        this.beat++;
+    }
+    
+    if (this.beat >= this.generator.columns){
+        if (this.shouldRestart || this.restartOnDeath && !this.generator.isAlive())
+            this.restart();
+        this.shouldRestart = false;
         this.beat = 0;
+        this.beatCounter = 0;
+    }
+    
+    if (this.enabled && this.beatCounter == 0)
+    {
+        this.update();
+        this.play();
+    }
     
 }
 
@@ -95,7 +127,7 @@ FM.Box.prototype.draw = function()
 
 FM.Box.prototype.play = function()
 {
-    this.marker.height = FM.CELL_HEIGHT * (this.generator.play(this.beat, this.scale, this.muted) + 1);   
+    this.marker.height = FM.CELL_HEIGHT * (this.generator.play(this.beat, this.scale, this.waveform, this.bpm, this.muted) + 1);   
 }
 
 FM.Box.prototype.touchStart = function(event)
