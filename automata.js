@@ -79,7 +79,7 @@ FM.Automata.prototype.draw = function(x, y, particles)
     }   
 }
 
-FM.Automata.prototype.play = function(beat, scale, waveform, bpm, muted)
+FM.Automata.prototype.play = function(beat, scale, waveform, attackDecayEnvelope, bpm, volume)
 {
     var notes = FM.sounds[scale];
     var note = 0;
@@ -88,9 +88,13 @@ FM.Automata.prototype.play = function(beat, scale, waveform, bpm, muted)
     note = note % (notes.length + 1);
     
     var duration = (FM.MEASURE_TIME / 1000) / bpm;
-    if (!muted && note != 0)
-        playNote(notes[note - 1], duration * 0.9, undefined, waveform);
-    return note;
+    
+    if (volume > 0 && note != 0)
+    {
+        playNote(notes[note - 1], duration * 0.8, volume, waveform, attackDecayEnvelope);
+        return note;
+    }
+    return 0;
 }
 
 FM.Automata.prototype.getNeighbors = function(x, y)

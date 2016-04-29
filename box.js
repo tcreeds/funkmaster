@@ -70,6 +70,8 @@ FM.Box = function( generator, data )
     
     this.beat = this.generator.columns;
     this.beatsPerMeasure = data.beatsPerMeasure;
+    this.volume = data.volume;
+    this.attackDecayEnvelope = data.attackDecayEnvelope;
     this.waveform = data.waveform;
     this.muted = data.muted;
     this.restartOnDeath = data.restartOnDeath;
@@ -127,7 +129,8 @@ FM.Box.prototype.draw = function()
 
 FM.Box.prototype.play = function()
 {
-    this.marker.height = FM.CELL_HEIGHT * (this.generator.play(this.beat, this.scale, this.waveform, this.bpm, this.muted) + 1);   
+    var vol = this.muted ? 0 : this.volume;
+    this.marker.height = FM.CELL_HEIGHT * (this.generator.play(this.beat, this.scale, this.waveform, this.attackDecayEnvelope, this.bpm, vol) + 1);   
 }
 
 FM.Box.prototype.touchStart = function(event)

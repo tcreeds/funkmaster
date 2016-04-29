@@ -6,7 +6,7 @@ FM.CANVAS_WIDTH = 640;
 FM.CANVAS_HEIGHT = 640;
 
 FM.MAX_PARTICLES = 600;
-FM.MEASURE_TIME = 600;
+FM.MEASURE_TIME = 900;
 FM.TICKS_PER_MEASURE = 12;
 FM.renderer;
 FM.stage;
@@ -57,6 +57,7 @@ window.onload = function(){
 
 FM.update = function()
 {
+    this.beat = this.beat + 1 % FM.TICKS_PER_MEASURE;
     for (var i = 0; i < FM.boxes.length; i++)
     {
         FM.boxes[i].tick();

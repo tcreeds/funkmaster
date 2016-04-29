@@ -4,7 +4,7 @@
 <head>
 
     <title>Funkmaster</title>
-    
+    <script src="AudioSampleLoader.js"></script>
     <script src="https://code.jquery.com/jquery-2.2.3.min.js"   integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo="   crossorigin="anonymous"></script>
     <script src="pixi.min.js"></script>
     <script src="inputManager.js"></script>
@@ -88,8 +88,16 @@
             </select>
         </div>
         <div class="data">
+            <label>Attack/Decay</label>
+            <input class="input" type=range boxProperty="attackDecayEnvelope">
+        </div>
+        <div class="data">
             <label>Beats Per Measure</label>
             <input class="input" type=text boxProperty="beatsPerMeasure">
+        </div>
+        <div class="data">
+            <label>Volume</label>
+            <input class="input" type=range boxProperty="volume">
         </div>
         <div class="data">
             <label for="rows">Rows</label>
