@@ -44,10 +44,12 @@ FM.Box = function( generator, data )
     this.background = PIXI.Sprite.fromImage("blank.png");
     this.background.tint = this.colors.background || 0x000099;
     this.background.interactive = true;
-    this.background.on("mousedown", (event) => this.touchStart(event));
+    this.background.on("mousedown", (event) => { 
+        this.touchStart(event);
+        FM.inspectBox(this, event);
+    });
     this.background.on("mousemove", (event) => this.drag(event));
     this.background.on("mouseup", (event) => this.touchEnd(event));
-    this.background.on("click", (event) => FM.inspectBox(this, event));
     this.background.alpha = 0.5;
     this.group.addChildAt(this.background, 0);
     
@@ -58,6 +60,10 @@ FM.Box = function( generator, data )
     Object.defineProperty(this, "columns", {
         get: function() { return generator.columns; },
         set: function(value) { generator.columns = value; }
+    });
+    Object.defineProperty(this, "toroidal", {
+        get: function() { return generator.toroidal; },
+        set: function(value) { generator.toroidal = value; }
     });
     Object.defineProperty(this, "beatsPerMeasure", {
         get: function() { return this.bpm; },
@@ -73,6 +79,7 @@ FM.Box = function( generator, data )
     this.volume = data.volume;
     this.attackDecayEnvelope = data.attackDecayEnvelope;
     this.waveform = data.waveform;
+    this.toroidal = data.generator.toroidal;
     this.muted = data.muted;
     this.restartOnDeath = data.restartOnDeath;
     this.shouldRestart = data.restartOnLoop;

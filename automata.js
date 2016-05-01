@@ -36,14 +36,14 @@ FM.Automata.prototype.update = function()
             var check = this.getNeighbors(i, j);
             if (this.currentBuffer[i][j] == 1)
             {
-                if (check == 2 || check == 3)
+                if (check == 2 || check == 4)
                     this.backBuffer[i][j] = 1;
                 else
                     this.backBuffer[i][j] = 0;
             }
             else
             {
-                if (check === 3)
+                if (check > 1 && check < 5)
                     this.backBuffer[i][j] = 1;
                 else
                     this.backBuffer[i][j] = 0;
@@ -106,10 +106,15 @@ FM.Automata.prototype.getNeighbors = function(x, y)
         {
             if (i == x && j ==y)
                 continue;
-            if (i >= 0 && i < this.currentBuffer.length && 
-                j >= 0 && j < this.currentBuffer[i].length && 
-                this.currentBuffer[i][j] == 1)
-                count++;            
+            if (!this.toroidal)
+            {
+                if (i < 0 || i == this.currentBuffer.length || j < 0 || j == this.currentBuffer[0].length)
+                    continue;
+            }
+            var a = (i + this.currentBuffer.length) % this.currentBuffer.length;
+            var b = (j + this.currentBuffer[0].length) % this.currentBuffer[0].length;
+            if (this.currentBuffer[a][b] == 1)
+                count++;  
         }
     }
     return count;

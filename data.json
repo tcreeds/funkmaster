@@ -17,7 +17,7 @@
             "restartOnDeath": true,
             "restartOnLoop": false,
             "volume": 50,
-            "muted": false,
+            "muted": true,
             "enabled": true,
             "colors":{
                 "background": "0x009900"
@@ -36,7 +36,7 @@
             "restartOnDeath": true,
             "restartOnLoop": false,
             "volume": 50,
-            "muted": true,
+            "muted": false,
             "enabled": true,
             "colors":{
                 "background": "0x990000"
@@ -55,7 +55,7 @@
             "restartOnDeath": true,
             "restartOnLoop": false,
             "volume": 50,
-            "muted": false,
+            "muted": true,
             "enabled": true,
             "colors":{
                 "background": "0x000099"
