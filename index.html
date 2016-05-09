@@ -7,9 +7,9 @@
     <script src="AudioSampleLoader.js"></script>
     <script src="https://code.jquery.com/jquery-2.2.3.min.js"   integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo="   crossorigin="anonymous"></script>
     <script src="pixi.min.js"></script>
-    <script src="inputManager.js"></script>
-    <script src="FM.js"></script>
+    <script src="jscolor.min.js"></script>
     <script src="sound.js"></script>
+    <script src="FM.js"></script>
     <script src="main.js"></script>
     <script src="box.js"></script>
     <script src="automata.js"></script>
@@ -18,7 +18,7 @@
             box-sizing: border-box;   
         }
         label{
-            width: 5em;
+            width: 6em;
             display: block;
             float: left;
         }
@@ -60,16 +60,60 @@
             margin: 0.2em;
             border: 1px solid black;
         }
+        .modal{
+            box-sizing: border-box;
+            position: fixed;
+            left: calc(50% - 190px);
+            top: calc(50% - 90px);
+            padding: 10px 20px;
+            height: 180px;
+            width: 380px;
+            background: white;   
+            box-shadow: 0px 2px 3px #333333;
+            display: none;
+        }
+        .modal button{
+            width: 40%;
+            margin: 5%;
+            float: left;
+        }
+        .dataField{
+            width: 100%;
+            margin: 5px 0;
+            padding: 0;
+        }
+        .dataField:before,
+        .dataField:after {
+            content: " ";
+            display: table;
+        }
+
+        .dataField:after {
+            clear: both;
+        }
     </style>
 </head>
 <body>
-    <div id="canvasContainer"></div>
-    <div class="dataContainer" id="boxDataContainer" style="display: none;">
-        
-        <div class="data">
-            <label for="name">Name</label>
-            <input class="input" boxProperty="name" type=text id="nameBox">
+    <div id="loadModal" class="modal">
+        <h2>LOAD CONFIGURATION</h2>
+        <div class="dataField">
+            <label>Configuration Name</label>
+            <input type=text id="loadConfigInput">
         </div>
+        <button onclick="$('#loadModal').hide();">CANCEL</button>
+        <button onclick="FM.loadConfiguration($('#loadConfigInput').val()); $('#loadConfigInput').val(''); $('#loadModal').hide();">LOAD</button>
+    </div>
+    <div id="saveModal" class="modal">
+        <h2>SAVE CONFIGURATION</h2>
+        <div class="dataField">
+            <label>Configuration Name</label>
+            <input type=text id="saveConfigInput">
+        </div>
+        <button onclick="$('#saveModal').hide();">CANCEL</button>
+        <button onclick="FM.saveConfiguration($('#saveConfigInput').val()); $('#saveConfigInput').val(''); $('#saveModal').hide();">SAVE</button>
+    </div>
+    <div id="canvasContainer"></div>
+    <div class="dataContainer boxData" style="display: none;">
         <div class="data">
             <label for="scale">Scale</label>
             <select class="input" boxProperty="scale" id="scale">
@@ -92,6 +136,16 @@
             <input class="input" type=range boxProperty="attackDecayEnvelope">
         </div>
         <div class="data">
+            <label>Reverb</label>
+            <input class="checkbox" boxProperty="reverb" type=checkbox>
+        </div>
+    </div>
+    <div class="dataContainer boxData" style="display: none;">
+        
+        <button id="restartButton" onclick="restartBox(this)">RESTART</button>
+        <button id="muteButton" onclick="toggleMute(this)">MUTE</button>
+        <button id="removeBox" onclick="FM.removeBox();">DELETE BOX</button>
+        <div class="data">
             <label>Beats Per Measure</label>
             <input class="input" type=text boxProperty="beatsPerMeasure">
         </div>
@@ -99,6 +153,12 @@
             <label>Volume</label>
             <input class="input" type=range boxProperty="volume">
         </div>
+        <div class="data">
+            <label>Background Color</label>
+            <input class="jscolor input" boxProperty="backgroundColor">
+        </div>
+    </div>
+    <div class="dataContainer boxData" style="display: none;">
         <div class="data">
             <label for="rows">Rows</label>
             <input class="input" boxProperty="rows" type=text id="rows">
@@ -108,6 +168,10 @@
             <input class="input" boxProperty="columns" type=text id="columns">
         </div>
         <div class="data">
+            <label>Toroidal</label>
+            <input class="checkbox" boxProperty="toroidal" type=checkbox>
+        </div>
+        <div class="data">
             <label>Restart On Death</label>
             <input class="checkbox" boxProperty="restartOnDeath" type=checkbox>
         </div>
@@ -115,12 +179,17 @@
             <label>Restart On Loop</label>
             <input class="checkbox" boxProperty="restartOnLoop" type=checkbox>
         </div>
-        <button id="restartButton" onclick="restartBox(this)">RESTART</button>
-        <button id="muteButton" onclick="toggleMute(this)">MUTE</button>
     </div>
     <div class="dataContainer">
+        
+        <button id="pauseButton" onclick="pause();">PAUSE</button>
         <button id="restartAllButton" onclick="restartAll(this)">RESTART ALL</button>
         <button id="muteAllButton" onclick="toggleMuteAll(this)">MUTE ALL</button>
+    </div>
+    <div class="dataContainer">
+        <button id="addBoxButton" onclick="FM.addBox()">ADD BOX</button>
+        <button id="saveConfigButton" onclick="$('#saveModal').show();">SAVE</button>
+        <button id="loadConfigButton" onclick="$('#loadModal').show();">LOAD</button>
     </div>
 </body>
 </html>

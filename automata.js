@@ -65,7 +65,6 @@ FM.Automata.prototype.draw = function(x, y, particles)
         {
             if (this.currentBuffer[i][j] == 1)
             {
-                particles[counter].alpha = 1;
                 particles[counter].x = i * FM.CELL_WIDTH;
                 particles[counter].y = j * FM.CELL_HEIGHT;
                 counter++;
@@ -74,12 +73,11 @@ FM.Automata.prototype.draw = function(x, y, particles)
     }
     for (var n = counter; n < particles.length; n++)
     {
-        particles[n].alpha = 0;
-        particles[n].x = -1000;
+        particles[n].x = -10000;
     }   
 }
 
-FM.Automata.prototype.play = function(beat, scale, waveform, attackDecayEnvelope, bpm, volume)
+FM.Automata.prototype.play = function(beat, scale, waveform, attackDecayEnvelope, bpm, reverb, volume)
 {
     var notes = FM.sounds[scale];
     var note = 0;
@@ -91,7 +89,7 @@ FM.Automata.prototype.play = function(beat, scale, waveform, attackDecayEnvelope
     
     if (volume > 0 && note != 0)
     {
-        playNote(notes[note - 1], duration * 0.8, volume, waveform, attackDecayEnvelope);
+        playNote(notes[note - 1], duration * 0.8, volume, waveform, attackDecayEnvelope, reverb);
         return note;
     }
     return 0;

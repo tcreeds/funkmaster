@@ -1,0 +1,1 @@
+{"configName":"Default","boxes":[{"x":0,"y":5,"scale":"c4","waveform":"square","attackDecayEnvelope":5,"beatsPerMeasure":3,"rows":16,"columns":3,"restartOnDeath":true,"restartOnLoop":false,"volume":50,"muted":true,"enabled":true,"colors":{"background":"0x009900","cell":"0x000000"},"generator":"Automata"}]}

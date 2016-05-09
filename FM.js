@@ -22,7 +22,12 @@ FM.sounds = {
 };
 
 /*FM.loader = new AudioSampleLoader();
-FM.load.src = [];*/
+FM.loader.src = "irHall.ogg";
+FM.loader.ctx = ctx;
+FM.loader.onload = ()=>{
+    FM.reverbSample = FM.loader.response;
+}
+FM.loader.send();*/
 
 window.onload = function(){
     
@@ -41,24 +46,13 @@ window.onload = function(){
     document.getElementById("canvasContainer").appendChild(FM.renderer.view);
             
     FM.setInputCallbacks();
-    //FM.input = new InputManager(FM.renderer.view);
 
     // create the root of the scene graph
     var stage = new PIXI.Container();
     FM.stage = new PIXI.Container();
     stage.addChild(FM.stage);
     
-    $.getJSON("data.json", function(data){
-        for (var i = 0; i < data.boxes.length; i++){
-            (function(box){
-                var generator = new FM[box.generator](box.columns, box.rows);
-                FM.boxes.push(new FM.Box(generator, box));
-            })(data.boxes[i]);
-        }
-        
-        FM.update();
-        FM.updateLoop = setInterval(FM.update, FM.MEASURE_TIME / FM.TICKS_PER_MEASURE);
-    });
+    FM.loadConfiguration();
 }
 
 FM.update = function()
@@ -82,30 +76,80 @@ FM.draw = function()
     FM.renderer.render(FM.stage);
 }
 
+FM.saveConfiguration = function(name)
+{
+    FM.currentConfiguration.configName = name;
+    var str = JSON.stringify(FM.currentConfiguration)
+    var data = JSON.parse(str);
+    $.ajax({
+        type: "POST",
+        url: "/saveConfig",
+        data: str,
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function(data){alert(data);},
+        failure: function(errMsg) {
+            alert(errMsg);
+        }
+  });
+}
+
+FM.loadConfiguration = function(name)
+{
+    if (name == undefined)
+        name = "Default.json";
+    else
+        name = "./json/" + name + ".json";
+    $.getJSON(name, function(data){
+        
+        while (FM.boxes.length > 0)
+        {
+            var box = FM.boxes.pop();
+            box.destroy();
+        }
+        
+        FM.currentConfiguration = data;
+        for (var i = 0; i < data.boxes.length; i++){
+            FM.addBox(data.boxes[i]);
+        }
+
+        FM.update();
+        FM.updateLoop = setInterval(FM.update, FM.MEASURE_TIME / FM.TICKS_PER_MEASURE);
+    });
+}
+
 //binds inputs to Box
 FM.inspectBox = function(box, event)
 {
-    if (FM.selectedBox)
-        FM.selectedBox.background.tint = FM.selectedBox.colors.background;
-    
-    $("#boxDataContainer").css("display", "block");
+    FM.clearSelectedBox();
+
+    $(".boxData").css("display", "block");
     FM.selectedBox = box;
     FM.selectedBox.background.tint = 0xFFFFFF;
-    
+
     justclicked = true;
-    
+
     $(".input").each(function(i, el){
          this.value = FM.selectedBox[this.getAttribute("boxProperty")];
     });
     $(".checkbox").each(function(i, el){
         this.checked = FM.selectedBox[this.getAttribute("boxProperty")]; 
     });
-    
+
     if (FM.selectedBox.muted)
         $("#muteButton").text("UNMUTE");
     else
-        $("#muteButton").text("MUTE");
-    
+        $("#muteButton").text("MUTE");   
+}
+
+FM.clearSelectedBox = function()
+{
+    if (FM.selectedBox)
+    {
+        $(".boxData").css("display", "none");
+        FM.selectedBox.background.tint = FM.selectedBox.colors.background;
+        FM.selectedBox = undefined;
+    }
 }
 
 FM.setInputCallbacks = function () 
@@ -114,9 +158,7 @@ FM.setInputCallbacks = function ()
         
         if (!justclicked && FM.selectedBox)
         {
-            $("#boxDataContainer").css("display", "none");
-            FM.selectedBox.background.tint = FM.selectedBox.colors.background;
-            FM.selectedBox = undefined;
+            FM.clearSelectedBox();
         }
         else if (!justclicked)
         {
@@ -142,6 +184,31 @@ FM.setInputCallbacks = function ()
         FM.stage.scale.y = FM.stage.scale.y * (1+delta);
         return false;
     });   
+}
+
+FM.addBox = function(data)
+{
+    data = data || FM.defaultBox;
+    var generator = new FM[data.generator](data.columns, data.rows);
+    FM.boxes.push(new FM.Box(generator, data));
+}
+
+FM.removeBox = function()
+{
+    if (FM.selectedBox)
+    {
+        for (var i = 0; i < FM.boxes.length; i++)
+        {
+            if (FM.boxes[i] == FM.selectedBox)
+            {
+                var box = FM.selectedBox;
+                FM.clearSelectedBox();
+                FM.boxes.splice(i,1);
+                box.destroy();
+                break;
+            }
+        }
+    }
 }
 
 function toggleMute(btn)
@@ -173,4 +240,30 @@ function restartAll()
     clearInterval(FM.updateLoop);
     FM.update();
     FM.updateLoop = setInterval(FM.update, FM.MEASURE_TIME / FM.TICKS_PER_MEASURE);
+};
+
+function pause()
+{
+   FM.paused = !FM.paused;
+}
+
+FM.defaultBox = {
+    "x": 0,
+    "y": 5,
+    "scale": "c4",
+    "waveform": "square",
+    "attackDecayEnvelope": 5,
+    "beatsPerMeasure": 3,
+    "rows": 16,
+    "columns": 3,
+    "restartOnDeath": true,
+    "restartOnLoop": false,
+    "volume": 50,
+    "muted": true,
+    "enabled": true,
+    "colors":{
+        "background": "0x009900",
+        "cell": "0x000000"
+    },
+    "generator": "Automata"
 };

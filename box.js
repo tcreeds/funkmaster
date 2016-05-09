@@ -23,8 +23,7 @@ FM.Box = function( generator, data )
     
     //cell sprite container
     this.sprites = new PIXI.ParticleContainer(FM.MAX_PARTICLES, {
-        position: true,
-        tint: true
+        position: true
     });
     this.group.addChild(this.sprites);
     
@@ -45,32 +44,51 @@ FM.Box = function( generator, data )
     this.background.tint = this.colors.background || 0x000099;
     this.background.interactive = true;
     this.background.on("mousedown", (event) => { 
-        this.touchStart(event);
-        FM.inspectBox(this, event);
+        if (!justclicked)
+        {
+            this.touchStart(event);
+            FM.inspectBox(this, event);
+        }
     });
     this.background.on("mousemove", (event) => this.drag(event));
     this.background.on("mouseup", (event) => this.touchEnd(event));
     this.background.alpha = 0.5;
     this.group.addChildAt(this.background, 0);
     
-    Object.defineProperty(this, "rows", {
-        get: function(){ return generator.rows;},
-        set: function(value){ generator.rows = value;}
-    });
-    Object.defineProperty(this, "columns", {
-        get: function() { return generator.columns; },
-        set: function(value) { generator.columns = value; }
-    });
-    Object.defineProperty(this, "toroidal", {
-        get: function() { return generator.toroidal; },
-        set: function(value) { generator.toroidal = value; }
-    });
-    Object.defineProperty(this, "beatsPerMeasure", {
-        get: function() { return this.bpm; },
-        set: function(value) { 
-            this.bpm = value; 
-            this.ticksPerNote = Math.floor(FM.TICKS_PER_MEASURE / this.bpm);   
-            this.beatCounter = this.ticksPerNote;
+    Object.defineProperties(this, {
+        "rows": {
+            get: function(){ return generator.rows;},
+            set: function(value){ generator.rows = value;}
+        },
+        "columns": {
+            get: function() { return generator.columns; },
+            set: function(value) { generator.columns = value; }
+        },
+        "toroidal": {
+            get: function() { return generator.toroidal; },
+            set: function(value) { generator.toroidal = value; }
+        },
+        "beatsPerMeasure": {
+            get: function() { return this.bpm; },
+            set: function(value) { 
+                this.bpm = value; 
+                this.ticksPerNote = Math.floor(FM.TICKS_PER_MEASURE / this.bpm);   
+                this.beatCounter = this.ticksPerNote;
+            }
+        },
+        "backgroundColor": {
+            get: function() { return this.colors.background },
+            set: function(value) { 
+                this.colors.background = "0x" + value.toString(); 
+                this.background.tint = this.colors.background;
+            }
+        },
+        "cellColor": {
+            get: function() { return this.colors.cell; },
+            set: function(value) {
+                this.colors.cell = "0x" + value.toString();
+                this.generator.cellColor = this.colors.cell;
+            }
         }
     });
     
@@ -85,6 +103,17 @@ FM.Box = function( generator, data )
     this.shouldRestart = data.restartOnLoop;
     this.enabled = data.enabled;
     this.restart();
+}
+
+FM.Box.prototype.destroy = function()
+{
+    delete this.generator;
+    for (var i = 0; i < this.particles.length; i++)
+        this.particles[i].destroy();
+    this.sprites.destroy();
+    this.marker.destroy();
+    this.background.destroy();
+    FM.stage.removeChild(this.group);
 }
 
 FM.Box.prototype.restart = function()
@@ -137,7 +166,7 @@ FM.Box.prototype.draw = function()
 FM.Box.prototype.play = function()
 {
     var vol = this.muted ? 0 : this.volume;
-    this.marker.height = FM.CELL_HEIGHT * (this.generator.play(this.beat, this.scale, this.waveform, this.attackDecayEnvelope, this.bpm, vol) + 1);   
+    this.marker.height = FM.CELL_HEIGHT * (this.generator.play(this.beat, this.scale, this.waveform, this.attackDecayEnvelope, this.bpm, this.reverb, vol) + 1);   
 }
 
 FM.Box.prototype.touchStart = function(event)
