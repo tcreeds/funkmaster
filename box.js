@@ -197,3 +197,32 @@ FM.Box.prototype.touchEnd = function(event)
 {
     this.moving = false;
 }
+
+FM.Box.prototype.toJSON = function()
+{
+    return {
+        x: this.x,
+        y: this.y, 
+        scale: this.scale,
+        waveform: this.waveform,
+        attackDecayEnvelope: this.attackDecayEnvelope,
+        beatsPerMeasure: this.beatsPerMeasure,
+        rows: this.rows,
+        columns: this.columns,
+        restartOnDeath: this.restartOnDeath,
+        restartOnLoop: this.restartOnLoop,
+        volume: this.volume,
+        muted: this.muted,
+        enabled: this.enabled,
+        colors:{
+            background: this.colors.background,
+            cell: this.colors.cell
+        },
+        generator: {
+            type: "Automata",
+            toroidal: this.toroidal,
+            highBound: this.highBound,
+            lowBound: this.lowBound
+        }
+    };
+}

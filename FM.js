@@ -79,8 +79,10 @@ FM.draw = function()
 FM.saveConfiguration = function(name)
 {
     FM.currentConfiguration.configName = name;
-    var str = JSON.stringify(FM.currentConfiguration)
-    var data = JSON.parse(str);
+    FM.currentConfiguration.boxes = [];
+    for (var i = 0; i < FM.boxes.length; i++)
+        FM.currentConfiguration.boxes.push(FM.boxes[i].toJSON());
+    var str = JSON.stringify(FM.currentConfiguration);
     $.ajax({
         type: "POST",
         url: "/saveConfig",
@@ -96,7 +98,7 @@ FM.saveConfiguration = function(name)
 
 FM.loadConfiguration = function(name)
 {
-    if (name == undefined)
+    if (name == undefined || name == "")
         name = "Default.json";
     else
         name = "./json/" + name + ".json";
@@ -113,6 +115,7 @@ FM.loadConfiguration = function(name)
             FM.addBox(data.boxes[i]);
         }
 
+        clearInterval(FM.updateLoop);
         FM.update();
         FM.updateLoop = setInterval(FM.update, FM.MEASURE_TIME / FM.TICKS_PER_MEASURE);
     });
@@ -189,7 +192,7 @@ FM.setInputCallbacks = function ()
 FM.addBox = function(data)
 {
     data = data || FM.defaultBox;
-    var generator = new FM[data.generator](data.columns, data.rows);
+    var generator = new FM[data.generator.type](data.columns, data.rows);
     FM.boxes.push(new FM.Box(generator, data));
 }
 
@@ -253,17 +256,22 @@ FM.defaultBox = {
     "scale": "c4",
     "waveform": "square",
     "attackDecayEnvelope": 5,
-    "beatsPerMeasure": 3,
+    "beatsPerMeasure": 4,
     "rows": 16,
-    "columns": 3,
+    "columns": 4,
     "restartOnDeath": true,
     "restartOnLoop": false,
     "volume": 50,
-    "muted": true,
+    "muted": false,
     "enabled": true,
     "colors":{
         "background": "0x009900",
         "cell": "0x000000"
     },
-    "generator": "Automata"
+    "generator": {
+        type: "Automata",
+        toroidal: true,
+        lowBound: 3,
+        highBound: 4
+    }
 };
