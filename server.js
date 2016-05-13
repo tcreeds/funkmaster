@@ -23,6 +23,7 @@ app.post('/saveConfig', function (req, res) {
         else
            console.log("Successfully wrote " + data.configName + '.json');
     });
+    res.send('');
         
     
 });

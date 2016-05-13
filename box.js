@@ -76,6 +76,18 @@ FM.Box = function( generator, data )
                 this.beatCounter = this.ticksPerNote;
             }
         },
+        "lowBound": {
+            get: function() { return this.generator.lowBound; },
+            set: function(value) {
+                this.generator.lowBound = value;   
+            }
+        },
+        "highBound": {
+            get: function() { return this.generator.highBound; },
+            set: function(value) {
+                this.generator.highBound = value;   
+            }
+        },
         "backgroundColor": {
             get: function() { return this.colors.background },
             set: function(value) { 
@@ -92,8 +104,11 @@ FM.Box = function( generator, data )
         }
     });
     
+    this.synth = new Tone.SimpleSynth().toMaster();
     this.beat = this.generator.columns;
     this.beatsPerMeasure = data.beatsPerMeasure;
+    this.lowBound = data.generator.lowBound;
+    this.highBound = data.generator.highBound;
     this.volume = data.volume;
     this.attackDecayEnvelope = data.attackDecayEnvelope;
     this.waveform = data.waveform;
@@ -166,7 +181,8 @@ FM.Box.prototype.draw = function()
 FM.Box.prototype.play = function()
 {
     var vol = this.muted ? 0 : this.volume;
-    this.marker.height = FM.CELL_HEIGHT * (this.generator.play(this.beat, this.scale, this.waveform, this.attackDecayEnvelope, this.bpm, this.reverb, vol) + 1);   
+    this.marker.height = FM.CELL_HEIGHT * (this.generator.playTone(this.synth, this.beat, this.scale, this.waveform) + 1);
+    //this.marker.height = FM.CELL_HEIGHT * (this.generator.play(this.beat, this.scale, this.waveform, this.attackDecayEnvelope, this.bpm, this.reverb, vol) + 1);   
 }
 
 FM.Box.prototype.touchStart = function(event)

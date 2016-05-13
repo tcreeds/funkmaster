@@ -8,6 +8,7 @@
     <script src="https://code.jquery.com/jquery-2.2.3.min.js"   integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo="   crossorigin="anonymous"></script>
     <script src="pixi.min.js"></script>
     <script src="jscolor.min.js"></script>
+    <script src="node_modules/tone/build/Tone.min.js"></script>
     <script src="sound.js"></script>
     <script src="FM.js"></script>
     <script src="main.js"></script>
@@ -166,6 +167,14 @@
         <div class="data">
             <label for="columns">Columns</label>
             <input class="input" boxProperty="columns" type=text id="columns">
+        </div>
+        <div class="data">
+            <label>Low Bound</label>
+            <input class="input" boxProperty="lowBound" type=text>
+        </div>
+        <div class="data">
+            <label>High Bound</label>
+            <input class="input" boxProperty="highBound" type=text>
         </div>
         <div class="data">
             <label>Toroidal</label>

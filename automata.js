@@ -36,14 +36,14 @@ FM.Automata.prototype.update = function()
             var check = this.getNeighbors(i, j);
             if (this.currentBuffer[i][j] == 1)
             {
-                if (check == 2 || check == 4)
+                if (check >= this.lowBound && check <= this.highBound)
                     this.backBuffer[i][j] = 1;
                 else
                     this.backBuffer[i][j] = 0;
             }
             else
             {
-                if (check > 1 && check < 5)
+                if (check > this.lowBound && check <= this.highBound)
                     this.backBuffer[i][j] = 1;
                 else
                     this.backBuffer[i][j] = 0;
@@ -91,6 +91,26 @@ FM.Automata.prototype.play = function(beat, scale, waveform, attackDecayEnvelope
     {
         playNote(notes[note - 1], duration * 0.8, volume, waveform, attackDecayEnvelope, reverb);
         return note;
+    }
+    return 0;
+}
+
+FM.Automata.prototype.playTone = function(synth, beat, scale, waveform)
+{
+    var volume = 0.3;
+    var notes = FM.sounds[scale];
+    var count = 0;
+    for (var i = 0; i < this.currentBuffer[beat].length; i++)
+        count += this.currentBuffer[beat][i];    
+    
+    var note = count % (notes.length + 1);
+    
+    var duration = (FM.MEASURE_TIME / 1000) / 8;
+    
+    if (volume > 0 && note != 0)
+    {
+        playTone(synth, notes[note - 1], duration * 0.8, volume);
+        return count;
     }
     return 0;
 }

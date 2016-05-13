@@ -1,4 +1,4 @@
-var ctx = new AudioContext();
+//var ctx = new AudioContext();
 
 function playNote( frequency, duration, volume, waveform, attackDecay, reverb) {
     if (FM.muted)
@@ -28,4 +28,12 @@ function playNote( frequency, duration, volume, waveform, attackDecay, reverb) {
     osc.start();
     
     osc.stop( ctx.currentTime + duration );
+}
+
+function playTone( synth, frequency, duration )
+{
+    if (FM.muted)
+        return;
+
+    synth.triggerAttackRelease(frequency, "8t");
 }
