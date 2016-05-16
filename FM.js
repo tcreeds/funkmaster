@@ -21,13 +21,60 @@ FM.sounds = {
     "c5": [523.25, 587.33, 659.25, 698.46, 783.99, 880, 987.77]
 };
 
-/*FM.loader = new AudioSampleLoader();
-FM.loader.src = "irHall.ogg";
+FM.loader = new AudioSampleLoader();
+FM.loader.src = [
+    "soundfiles/IMreverbs/Block Inside.wav",
+    "soundfiles/IMreverbs/Bottle Hall.wav",
+    "soundfiles/IMreverbs/Cement Blocks 1.wav",
+    "soundfiles/IMreverbs/Cement Blocks 2.wav",
+    "soundfiles/IMreverbs/Chateau de Logne, Outside.wav",
+    "soundfiles/IMreverbs/Conic Long Echo Hall.wav",
+    "soundfiles/IMreverbs/Deep Space.wav",
+    "soundfiles/IMreverbs/Derlon Sanctuary.wav",
+    "soundfiles/IMreverbs/Direct Cabinet N1.wav",
+    "soundfiles/IMreverbs/Direct Cabinet N2.wav",
+    "soundfiles/IMreverbs/Direct Cabinet N3.wav",
+    "soundfiles/IMreverbs/Direct Cabinet N4.wav",
+    "soundfiles/IMreverbs/Five Columns.wav",
+    "soundfiles/IMreverbs/Five Columns Long.wav",
+    "soundfiles/IMreverbs/French 18th Century Salon.wav",
+    "soundfiles/IMreverbs/Going Home.wav",
+    "soundfiles/IMreverbs/Greek 7 Echo Hall.wav",
+    "soundfiles/IMreverbs/Highly Damped Large Room.wav",
+    "soundfiles/IMreverbs/In The Silo.wav",
+    "soundfiles/IMreverbs/In The Silo Revised.wav",
+    "soundfiles/IMreverbs/Large Bottle Hall.wav",
+    "soundfiles/IMreverbs/Large Long Echo Hall.wav",
+    "soundfiles/IMreverbs/Large Wide Echo Hall.wav",
+    "soundfiles/IMreverbs/Masonic Lodge.wav",
+    "soundfiles/IMreverbs/Musikvereinsaal.wav",
+    "soundfiles/IMreverbs/Narrow Bumpy Space.wav",
+    "soundfiles/IMreverbs/Nice Drum Room.wav",
+    "soundfiles/IMreverbs/On a Star.wav",
+    "soundfiles/IMreverbs/Parking Garage.wav",
+    "soundfiles/IMreverbs/Rays.wav",
+    "soundfiles/IMreverbs/Right Glass Triangle.wav",
+    "soundfiles/IMreverbs/Ruby Room.wav",
+    "soundfiles/IMreverbs/Scala Milan Opera Hall.wav",
+    "soundfiles/IMreverbs/Small Drum Room.wav",
+    "soundfiles/IMreverbs/Small Prehistoric Cave.wav",
+    "soundfiles/IMreverbs/St Nicolaes Church.wav",
+    "soundfiles/IMreverbs/Trig Room.wav",
+    "soundfiles/IMreverbs/Vocal Duo.wav",
+];
 FM.loader.ctx = ctx;
 FM.loader.onload = ()=>{
-    FM.reverbSample = FM.loader.response;
+    FM.reverbSamples = {};
+    var options = [];
+    for (var i = 0; i < FM.loader.src.length; i++)
+    {
+        var name = FM.loader.src[i].slice(21, FM.loader.src[i].length - 4);
+        FM.reverbSamples[name] = FM.loader.response[i];
+        options.push(`<option value="${name}">${name}</option>`);
+    }
+    $("#reverb").append(options);
 }
-FM.loader.send();*/
+FM.loader.send();
 
 window.onload = function(){
     
@@ -57,12 +104,16 @@ window.onload = function(){
 
 FM.update = function()
 {
+    var updated = false;
     this.beat = this.beat + 1 % FM.TICKS_PER_MEASURE;
     for (var i = 0; i < FM.boxes.length; i++)
     {
-        FM.boxes[i].tick();
+        if (FM.boxes[i].tick())
+            updated = true;
     }
-    FM.draw();
+    if (updated)
+        FM.draw();
+    
 }
 
 FM.draw = function()
@@ -256,6 +307,7 @@ FM.defaultBox = {
     "scale": "c4",
     "waveform": "square",
     "attackDecayEnvelope": 5,
+    "reverb": "",
     "beatsPerMeasure": 4,
     "rows": 16,
     "columns": 4,
@@ -273,5 +325,11 @@ FM.defaultBox = {
         toroidal: true,
         lowBound: 3,
         highBound: 4
+    },
+    modulator: {
+        waveform: 'square',
+        frequency: 220,
+        harmonicity: 2,
+        modIndex: 0.5
     }
 };

@@ -101,10 +101,39 @@ FM.Box = function( generator, data )
                 this.colors.cell = "0x" + value.toString();
                 this.generator.cellColor = this.colors.cell;
             }
+        },
+        "reverb": {
+            get: function() { return this.reverbSample; },
+            set: function(value) {
+                this.reverbSample = value;
+            }   
+        },
+        "harmonicity": {
+            get: function() { return this.modulator.harmonicity; },
+            set: function(value) {
+                this.modulator.harmonicity = value;   
+            }
+        },
+        "modIndex": {
+            get: function() { return this.modulator.modIndex; },
+            set: function(value) {
+                this.modulator.modIndex = value;   
+            }
+        },
+        "modulationFrequency": {
+            get: function() { return this.modulator.frequency; },
+            set: function(value) {
+                this.modulator.frequency = value;   
+            }
+        },
+        "modulationWaveform": {
+            get: function() { return this.modulator.waveform; },
+            set: function(value) {
+                this.modulator.waveform = value;   
+            }
         }
     });
     
-    this.synth = new Tone.SimpleSynth().toMaster();
     this.beat = this.generator.columns;
     this.beatsPerMeasure = data.beatsPerMeasure;
     this.lowBound = data.generator.lowBound;
@@ -112,6 +141,10 @@ FM.Box = function( generator, data )
     this.volume = data.volume;
     this.attackDecayEnvelope = data.attackDecayEnvelope;
     this.waveform = data.waveform;
+    this.reverb = data.reverb;
+    
+    this.modulator = data.modulator;
+    
     this.toroidal = data.generator.toroidal;
     this.muted = data.muted;
     this.restartOnDeath = data.restartOnDeath;
@@ -145,10 +178,12 @@ FM.Box.prototype.restart = function()
 FM.Box.prototype.tick = function()
 {
     this.beatCounter++;
+    var updated = false;
     if (this.beatCounter >= this.ticksPerNote)
     {
         this.beatCounter = 0;
         this.beat++;
+        updated = true;
     }
     
     if (this.beat >= this.generator.columns){
@@ -164,7 +199,7 @@ FM.Box.prototype.tick = function()
         this.update();
         this.play();
     }
-    
+    return updated;
 }
 
 FM.Box.prototype.update = function()
@@ -181,8 +216,8 @@ FM.Box.prototype.draw = function()
 FM.Box.prototype.play = function()
 {
     var vol = this.muted ? 0 : this.volume;
-    this.marker.height = FM.CELL_HEIGHT * (this.generator.playTone(this.synth, this.beat, this.scale, this.waveform) + 1);
-    //this.marker.height = FM.CELL_HEIGHT * (this.generator.play(this.beat, this.scale, this.waveform, this.attackDecayEnvelope, this.bpm, this.reverb, vol) + 1);   
+    //this.marker.height = FM.CELL_HEIGHT * (this.generator.playTone(this.synth, this.beat, this.scale, this.waveform, vol, this.attackDecayEnvelope, this.bpm) + 1);
+    this.marker.height = FM.CELL_HEIGHT * (this.generator.play(this.beat, this.scale, this.waveform, this.attackDecayEnvelope, this.bpm, this.reverb, this.modulator, vol) + 1);   
 }
 
 FM.Box.prototype.touchStart = function(event)
@@ -223,6 +258,7 @@ FM.Box.prototype.toJSON = function()
         waveform: this.waveform,
         attackDecayEnvelope: this.attackDecayEnvelope,
         beatsPerMeasure: this.beatsPerMeasure,
+        reverb: this.reverb,
         rows: this.rows,
         columns: this.columns,
         restartOnDeath: this.restartOnDeath,
@@ -239,6 +275,12 @@ FM.Box.prototype.toJSON = function()
             toroidal: this.toroidal,
             highBound: this.highBound,
             lowBound: this.lowBound
+        },
+        modulator: {
+            waveform: this.modulator.waveform,
+            frequency: this.modulator.frequency,
+            harmonicity: this.modulator.harmonicity,
+            modIndex: this.modulator.modIndex
         }
     };
 }

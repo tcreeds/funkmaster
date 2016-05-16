@@ -43,7 +43,7 @@ FM.Automata.prototype.update = function()
             }
             else
             {
-                if (check > this.lowBound && check <= this.highBound)
+                if (check >= this.lowBound && check <= this.highBound)
                     this.backBuffer[i][j] = 1;
                 else
                     this.backBuffer[i][j] = 0;
@@ -77,7 +77,7 @@ FM.Automata.prototype.draw = function(x, y, particles)
     }   
 }
 
-FM.Automata.prototype.play = function(beat, scale, waveform, attackDecayEnvelope, bpm, reverb, volume)
+FM.Automata.prototype.play = function(beat, scale, waveform, attackDecayEnvelope, bpm, reverb, modulator, volume)
 {
     var notes = FM.sounds[scale];
     var note = 0;
@@ -89,15 +89,22 @@ FM.Automata.prototype.play = function(beat, scale, waveform, attackDecayEnvelope
     
     if (volume > 0 && note != 0)
     {
-        playNote(notes[note - 1], duration * 0.8, volume, waveform, attackDecayEnvelope, reverb);
+        playNote({
+            frequency: notes[note - 1], 
+            duration: duration * 0.8, 
+            volume: volume, 
+            waveform: waveform,
+            attackDecay: attackDecayEnvelope,
+            reverb: reverb,
+            modulator: modulator
+        });
         return note;
     }
     return 0;
 }
 
-FM.Automata.prototype.playTone = function(synth, beat, scale, waveform)
+FM.Automata.prototype.playTone = function(synth, beat, scale, waveform, volume, attackDecay, bpm)
 {
-    var volume = 0.3;
     var notes = FM.sounds[scale];
     var count = 0;
     for (var i = 0; i < this.currentBuffer[beat].length; i++)
@@ -105,11 +112,11 @@ FM.Automata.prototype.playTone = function(synth, beat, scale, waveform)
     
     var note = count % (notes.length + 1);
     
-    var duration = (FM.MEASURE_TIME / 1000) / 8;
+    var duration = (FM.MEASURE_TIME / 1000) / bpm;
     
     if (volume > 0 && note != 0)
     {
-        playTone(synth, notes[note - 1], duration * 0.8, volume);
+        playTone(synth, notes[note - 1], duration * 0.25, volume, waveform, attackDecay / 8 );
         return count;
     }
     return 0;

@@ -8,7 +8,7 @@
     <script src="https://code.jquery.com/jquery-2.2.3.min.js"   integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo="   crossorigin="anonymous"></script>
     <script src="pixi.min.js"></script>
     <script src="jscolor.min.js"></script>
-    <script src="node_modules/tone/build/Tone.min.js"></script>
+    <!--<script src="node_modules/tone/build/Tone.min.js"></script>-->
     <script src="sound.js"></script>
     <script src="FM.js"></script>
     <script src="main.js"></script>
@@ -115,6 +115,7 @@
     </div>
     <div id="canvasContainer"></div>
     <div class="dataContainer boxData" style="display: none;">
+        <label>Oscillator</label>
         <div class="data">
             <label for="scale">Scale</label>
             <select class="input" boxProperty="scale" id="scale">
@@ -138,7 +139,28 @@
         </div>
         <div class="data">
             <label>Reverb</label>
-            <input class="checkbox" boxProperty="reverb" type=checkbox>
+            <select class="input" boxProperty="reverb" id="reverb">
+                <option selected value="">None</option>
+            </select>
+        </div>
+    </div>
+    <div class="dataContainer boxData" style="display: none;">
+        <label>Modulator</label>
+        <div class="data">
+            <label>Waveform</label>
+            <input class="input" boxProperty="modulationWaveform">
+        </div>
+        <div class="data">
+            <label>Frequency</label>
+            <input class="input" boxProperty="modulationFrequency">
+        </div>
+        <div class="data">
+            <label>Harmonicity</label>
+            <input class="input" boxProperty="harmonicity">
+        </div>
+        <div class="data">
+            <label>Modulation Index</label>
+            <input class="input" boxProperty="modIndex">
         </div>
     </div>
     <div class="dataContainer boxData" style="display: none;">
@@ -184,10 +206,10 @@
             <label>Restart On Death</label>
             <input class="checkbox" boxProperty="restartOnDeath" type=checkbox>
         </div>
-        <div class="data">
+        <!--<div class="data">
             <label>Restart On Loop</label>
             <input class="checkbox" boxProperty="restartOnLoop" type=checkbox>
-        </div>
+        </div>-->
     </div>
     <div class="dataContainer">
         
